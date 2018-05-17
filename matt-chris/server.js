@@ -2,16 +2,16 @@
 
 const fs = require('fs');
 const express = require('express');
-const pg = required('pg');
+const pg = require('pg');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Windows and Linux users: You should have retained the user/password from the pre-work for this course.
 // Your OS may require that your conString is composed of additional information including user and password.
-const conString = 'postgres://USER:PASSWORD@HOST:PORT/DBNAME';
+// const conString = 'postgres://USER:PASSWORD@HOST:PORT/DBNAME';
 
 // Mac:
-// const conString = 'postgres://localhost:5432';
+const conString = 'postgres://localhost:5432';
 
 const client = new pg.Client(conString);
 
@@ -28,7 +28,7 @@ app.use(express.static('./public'));
 // REVIEW: Routes for requesting HTML resources
 app.get('/new-article', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js, if any, is interacting with this particular piece of `server.js`? What part of CRUD, if any, is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // This responds to number 5, it's interacting with the Article.fetchAll. It's interacting with the read part of CRUD
   response.sendFile('new.html', {root: './public'});
 });
 
@@ -36,8 +36,8 @@ app.get('/new-article', (request, response) => {
 // REVIEW: Routes for making API calls to use CRUD Operations on our database
 app.get('/articles', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
-  client.query('')
+  //This responds to number 3, it's interacting with the main Article function that takes over the rawDataOBJ.
+  client.query('SELECT * FROM articles')
     .then(function(result) {
       response.send(result.rows);
     })
@@ -48,7 +48,7 @@ app.get('/articles', (request, response) => {
 
 app.post('/articles', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // The numbers it's responding to are 2,3,4,and 5. It's taking that request of the articles to the server, creating a query to the database, processing that information and giving a response back to the server then pushing that to the http.
   let SQL = `
     INSERT INTO articles(title, author, "authorUrl", category, "publishedOn", body)
     VALUES ($1, $2, $3, $4, $5, $6);
@@ -76,7 +76,7 @@ app.put('/articles/:id', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // PUT YOUR RESPONSE HERE
 
-  let SQL = '';
+  let SQL = 'INSERT INTO kilvolt';
   let values = [];
 
   client.query( SQL, values )
@@ -90,7 +90,7 @@ app.put('/articles/:id', (request, response) => {
 
 app.delete('/articles/:id', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // This is referring to numbers 3,4,and 5. It is taking those articles form the query to the database, processing the delete to the server then serving it back to the http.
 
   let SQL = `DELETE FROM articles WHERE article_id=$1;`;
   let values = [request.params.id];
@@ -106,9 +106,9 @@ app.delete('/articles/:id', (request, response) => {
 
 app.delete('/articles', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // This is referring to 3, 4, and 5. It's working with the Truncate table and the delete in CRUD.
 
-  let SQL = '';
+  let SQL = 'TRUNCATE TABLE users';
   client.query( SQL )
     .then(() => {
       response.send('Delete complete')
@@ -119,7 +119,7 @@ app.delete('/articles', (request, response) => {
 });
 
 // COMMENT: What is this function invocation doing?
-// PUT YOUR RESPONSE HERE
+// Loading the database
 loadDB();
 
 app.listen(PORT, () => {
@@ -131,7 +131,7 @@ app.listen(PORT, () => {
 ////////////////////////////////////////
 function loadArticles() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // This is referring 3 and 4 and is loading the articles from the query into the database is referring to the read.
 
   let SQL = 'SELECT COUNT(*) FROM articles';
   client.query( SQL )
@@ -156,7 +156,7 @@ function loadArticles() {
 
 function loadDB() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // This is referring to 3 and 4. It's loading the information from the query to the database (processing and preparing).
   client.query(`
     CREATE TABLE IF NOT EXISTS articles (
       article_id SERIAL PRIMARY KEY,
@@ -175,12 +175,14 @@ function loadDB() {
     });
 }
 
-app.get('/event', function( request, response){
-  client.query('')
-  .then(function(data){
-    response.send(data)
-  })
-  .catch(function(request, response){
-    console.error(err);
-  })
+app.get('/articles', function( request, response){
+  client.query('SELECT * FROM table_name;')
+    .then(function(data){
+      response.send(data)
+    })
+    .catch(function(request, response){
+      console.error(err);
+    })
 });
+
+
