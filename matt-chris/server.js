@@ -49,45 +49,49 @@ app.get('/articles', (request, response) => {
 app.post('/articles', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // The numbers it's responding to are 2,3,4,and 5. It's taking that request of the articles to the server, creating a query to the database, processing that information and giving a response back to the server then pushing that to the http.
-  let SQL = `
-    INSERT INTO articles(title, author, "authorUrl", category, "publishedOn", body)
+
+  client.query(
+    `INSERT INTO
+    articles(title, author, "authorUrl", category, "publishedOn", body)
     VALUES ($1, $2, $3, $4, $5, $6);
-  `;
-
-  let values = [
-    request.body.title,
-    request.body.author,
-    request.body.authorUrl,
-    request.body.category,
-    request.body.publishedOn,
-    request.body.body
-  ]
-
-  client.query( SQL, values )
-    .then(function() {
+    `,
+    [
+      request.body.title,
+      request.body.author,
+      request.body.authorUrl,
+      request.body.category,
+      request.body.publishedOn,
+      request.body.body
+    ]
+  )
+    .then(function () {
       response.send('insert complete')
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.error(err);
     });
 });
-
 app.put('/articles/:id', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // PUT YOUR RESPONSE HERE
+  // Steps 3-5 in the diagram, and Article.prototype.updateRecord is working with server.js and CRUD function Update.
 
-  let SQL = 'INSERT INTO kilvolt';
-  let values = [];
+  const article_id = request.params.id;
 
-  client.query( SQL, values )
+  client.query(
+    `
+    UPDATE articles 
+    WHERE article_id = ${request.params.id};`
+  )
     .then(() => {
+      console.log('hello');
       response.send('update complete')
+
     })
+
     .catch(err => {
       console.error(err);
     });
 });
-
 app.delete('/articles/:id', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // This is referring to numbers 3,4,and 5. It is taking those articles form the query to the database, processing the delete to the server then serving it back to the http.
@@ -107,9 +111,9 @@ app.delete('/articles/:id', (request, response) => {
 app.delete('/articles', (request, response) => {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // This is referring to 3, 4, and 5. It's working with the Truncate table and the delete in CRUD.
-
-  let SQL = 'TRUNCATE TABLE users';
-  client.query( SQL )
+  client.query(
+    'TRUNCATE TABLE articles;'
+  )
     .then(() => {
       response.send('Delete complete')
     })
@@ -133,8 +137,7 @@ function loadArticles() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
   // This is referring 3 and 4 and is loading the articles from the query into the database is referring to the read.
 
-  let SQL = 'SELECT COUNT(*) FROM articles';
-  client.query( SQL )
+  client.query('SELECT COUNT(*) FROM articles')
     .then(result => {
     // REVIEW: result.rows is an array of objects that PostgreSQL returns as a response to a query.
     // If there is nothing on the table, then result.rows[0] will be undefined, which will make count undefined. parseInt(undefined) returns NaN. !NaN evaluates to true.
@@ -175,14 +178,6 @@ function loadDB() {
     });
 }
 
-app.get('/articles', function( request, response){
-  client.query('SELECT * FROM table_name;')
-    .then(function(data){
-      response.send(data)
-    })
-    .catch(function(request, response){
-      console.error(err);
-    })
-});
+
 
 
